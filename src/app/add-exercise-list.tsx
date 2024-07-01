@@ -4,19 +4,17 @@ import { Button } from '@/components/button';
 import { Entypo } from '@expo/vector-icons'
 import { useState } from 'react';
 import { Link } from 'expo-router';
-import { decodeJson, encodeJson } from '@/utils/encode';
+import { decodeJson } from '@/utils/encode';
+import { saveExerciseList } from '@/stores/exercise-list-store';
 
 export default function AddExerciseList() {
     const [exerciseListCode, setExerciseListCode] = useState('')
-    function saveExerciseList(){
-        const json = { name: "John Doe", age: 30, city: "New York" };
-        const encodedString = encodeJson(json);
-        console.log("Encoded:", encodedString);
-
-        // Decodificar a string de volta para JSON
-        if(encodedString){
-            const decodedJson = decodeJson(encodedString);
-            console.log("Decoded:", decodedJson);
+    async function save(){
+        try {
+            const decodedExerciseList = decodeJson(exerciseListCode)
+            if(decodedExerciseList) await saveExerciseList(decodedExerciseList)
+        } catch (error) {
+            console.error(error)
         }
     }
 
@@ -28,7 +26,7 @@ export default function AddExerciseList() {
                     <Text className='text-slate-100 text-lg mb-2'>Informe o código da lista</Text>
                     <TextInput className='bg-slate-200 h-10 pl-2' value={exerciseListCode} onChangeText={setExerciseListCode}/>
                 </View>
-                <Button onPress={saveExerciseList} className='mx-3'>
+                <Button onPress={save} className='mx-3'>
                     <Button.Icon>
                         <Entypo name="check" size={20} />
                         <Button.Text>
